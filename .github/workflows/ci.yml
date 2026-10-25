@@ -1,0 +1,82 @@
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  shim:
+    name: dsh-shim (node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: 单测（离线，不连 DSH）
+        working-directory: dsh-shim
+        run: node --test test/*.test.mjs
+
+  plugin:
+    name: astrbot 插件语法
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: py_compile
+        working-directory: astrbot-plugin
+        run: python -m py_compile main.py dsh_client.py
+      - name: 客户端不依赖第三方库
+        working-directory: astrbot-plugin
+        run: |
+          # 这两行如果报 ModuleNotFoundError，说明有人偷偷加了依赖
+          python -c "import ast,sys; [ast.parse(open(f,encoding='utf-8').read()) for f in ('main.py','dsh_client.py')]"
+          python - <<'PY'
+          import re
+          for f in ('dsh_client.py',):
+              src = open(f, encoding='utf-8').read()
+              imports = re.findall(r'^\s*(?:import|from)\s+([a-zA-Z_][\w.]*)', src, re.M)
+              bad = [i for i in imports if i.split('.')[0] not in {'json','urllib','sys','os'}]
+              assert not bad, f'{f} 引入了非标准库依赖: {bad}'
+          print('OK: 只用标准库')
+          PY
+
+  docs:
+    name: 文档链接与 JSON 校验
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: JSON 模板能被解析
+        run: |
+          node -e "for (const f of ['dsh-shim/config.example.json','astrbot-plugin/config.json.example','dsh-shim/package.json']) JSON.parse(require('fs').readFileSync(f,'utf8')); console.log('JSON OK')"
+      - name: README 里的相对链接指向真实文件
+        run: |
+          node - <<'JS'
+          const fs = require('fs');
+          const path = require('path');
+          const files = ['README.md', 'docs/protocol.md', 'docs/troubleshooting.md'];
+          let bad = 0;
+          for (const file of files) {
+            const text = fs.readFileSync(file, 'utf8');
+            for (const match of text.matchAll(/\]\((?!https?:|#)([^)]+)\)/g)) {
+              const target = path.resolve(path.dirname(file), match[1].split('#')[0]);
+              if (!fs.existsSync(target)) {
+                console.log(`BROKEN ${file} -> ${match[1]}`);
+                bad += 1;
+              }
+            }
+          }
+          if (bad) process.exit(1);
+          console.log('链接 OK');
+          JS

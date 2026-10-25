@@ -1,0 +1,13 @@
+{
+  "shim_url": "http://127.0.0.1:7824",
+  "token": "和启动 shim 时的 SHIM_TOKEN 保持一致；留空表示不校验",
+  "reply_timeout_seconds": 180,
+  "trigger": {
+    "mode": "all",
+    "groups": [],
+    "require_at": false,
+    "ignore_prefix": ["/"]
+  },
+  "fallback_on_error": true,
+  "debug": false
+}

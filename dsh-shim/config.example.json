@@ -1,0 +1,26 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 7824,
+    "token": ""
+  },
+  "dsh": {
+    "baseUrl": "http://127.0.0.1:19387",
+    "authToken": "",
+    "dshHome": "",
+    "agentPreset": "",
+    "cwd": "",
+    "timeoutMs": 15000
+  },
+  "session": {
+    "maxTurns": 40,
+    "idleMinutes": 120,
+    "replyTimeoutMs": 180000,
+    "pollMs": 400
+  },
+  "memory": {
+    "enabled": false,
+    "baseUrl": "http://127.0.0.1:7823",
+    "token": ""
+  }
+}

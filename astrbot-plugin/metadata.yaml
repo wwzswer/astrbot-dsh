@@ -1,0 +1,7 @@
+name: dsh_bridge
+desc: 把 QQ 消息转给 DeepSeek Harness 处理——AstrBot 当前端，DSH 当大脑（需要同仓的 dsh-shim 在跑）
+version: 0.1.0
+author: dsh-bridge
+repo: https://github.com/wwzswer/astrbot-dsh
+display_name: DSH 大脑
+help: 先启动 dsh-shim（node src/index.mjs），再启用本插件；config.json 里填 shim_url 和 token。

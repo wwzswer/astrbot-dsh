@@ -1,0 +1,15 @@
+{
+  "name": "dsh-shim",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "把 DeepSeek Harness 包装成一个给 AstrBot 用的简单会话 API（零依赖）",
+  "engines": {
+    "node": ">=20.10"
+  },
+  "scripts": {
+    "start": "node src/index.mjs",
+    "doctor": "node src/doctor.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}
