@@ -91,11 +91,12 @@ test('同一个会话的请求串行执行（不会互相插队）', async () =>
 });
 
 test('不同会话互不阻塞', async () => {
-  const client = fakeClient({ onAsk: () => new Promise((resolve) => setTimeout(resolve, 30)) });
+  const client = fakeClient({ onAsk: () => new Promise((resolve) => setTimeout(resolve, 150)) });
   const pool = makePool({ client });
   const startedAt = Date.now();
   await Promise.all([pool.ask('a', '1'), pool.ask('b', '2')]);
-  assert.ok(Date.now() - startedAt < 55, '两个不同 key 应该并行，不该串成 60ms');
+  // 串行会是 300ms+；并行约 150ms。阈值放到 280 是为了让 CI 上慢一点的机器不误报。
+  assert.ok(Date.now() - startedAt < 280, '两个不同 key 应该并行，不该串成 300ms');
   assert.equal(client.createdCount, 2);
 });
 

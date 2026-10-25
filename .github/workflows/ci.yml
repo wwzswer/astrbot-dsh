@@ -21,7 +21,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: 单测（离线，不连 DSH）
         working-directory: dsh-shim
-        run: node --test test/*.test.mjs
+        run: npm test
 
   plugin:
     name: astrbot 插件语法
@@ -44,7 +44,9 @@ jobs:
           for f in ('dsh_client.py',):
               src = open(f, encoding='utf-8').read()
               imports = re.findall(r'^\s*(?:import|from)\s+([a-zA-Z_][\w.]*)', src, re.M)
-              bad = [i for i in imports if i.split('.')[0] not in {'json','urllib','sys','os'}]
+              # __future__ 是语言内置的，不算依赖
+              allowed = {'json', 'urllib', 'sys', 'os', '__future__'}
+              bad = [i for i in imports if i.split('.')[0] not in allowed]
               assert not bad, f'{f} 引入了非标准库依赖: {bad}'
           print('OK: 只用标准库')
           PY

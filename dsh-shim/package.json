@@ -10,6 +10,6 @@
   "scripts": {
     "start": "node src/index.mjs",
     "doctor": "node src/doctor.mjs",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/dsh-client.test.mjs test/sessions.test.mjs"
   }
 }

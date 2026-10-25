@@ -1,6 +1,6 @@
 # astrbot-dsh
 
-[![ci](https://github.com/wwzswer/astrbot-dsh/actions/workflows/ci.yml/badge.svg)](https://github.com/wwzswer/astrbot-dsh/actions/workflows/ci.yml)
+[![ci](https://github.com/wwzswer/Astrbot-DSH/actions/workflows/ci.yml/badge.svg)](https://github.com/wwzswer/Astrbot-DSH/actions/workflows/ci.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **AstrBot 当 QQ 前端，DeepSeek Harness 当大脑。**
